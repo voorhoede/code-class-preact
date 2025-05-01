@@ -1,0 +1,109 @@
+--- a/exercise-2/src/index.tsx
++++ b/exercise-2/src/index.tsx
+@@ -1,10 +1,28 @@
+ import "./style.css";
+ 
+-import { render } from "preact";
++import { render, createContext } from "preact";
++import { signal } from "@preact/signals";
+ import { TodoList } from "./todo-list.tsx";
+ 
++export const AppState = createContext(null);
++
++function createAppState() {
++  const todos = signal([
++    { text: "Buy groceries", complete: signal(false) },
++    { text: "Walk the dog", complete: signal(false) },
++  ]);
++
++  return { todos };
++}
++const state = createAppState();
++
+ export function App() {
+   return <TodoList />;
+ }
+ 
+-render(<App />, document.getElementById("app")!);
++render(
++  <AppState.Provider value={createAppState()}>
++    <App />
++  </AppState.Provider>,
++  document.getElementById("app")!,
++);
+
+--- a/exercise-2/src/todo-list.tsx
++++ b/exercise-2/src/todo-list.tsx
+@@ -1,32 +1,47 @@
+-import { signal } from "@preact/signals";
++import {
++  useSignal,
++  useComputed,
++  signal,
++  useSignalEffect,
++} from "@preact/signals";
++import { useContext } from "preact/hooks";
++import { AppState } from "./index.tsx";
+ 
+-const todos = signal([
+-  { text: "Buy groceries", complete: signal(false) },
+-  { text: "Walk the dog", complete: signal(false) },
+-]);
++export function TodoList() {
++  const state = useContext(AppState);
+ 
+-const text = signal("");
++  const completed = useComputed(() => {
++    return state.todos.value.filter((todo) => todo.complete.value).length;
++  });
+ 
+-function addTodo() {
+-  todos.value = [...todos.value, { text: text.value, complete: signal(false) }];
+-  text.value = "";
+-}
++  const text = useSignal("");
++  useSignalEffect(() => console.log(text.value));
+ 
+-function removeTodo(todoToRemove) {
+-  todos.value = todos.value.filter((todo) => todo !== todoToRemove);
+-}
++  function addTodo() {
++    state.todos.value = [
++      ...state.todos.value,
++      { text: text.value, complete: signal(false) },
++    ];
++    text.value = "";
++  }
+ 
+-const completeTodo = (todo) => (event) =>
+-  (todo.complete.value = event.currentTarget.checked);
++  function removeTodo(todoToRemove) {
++    state.todos.value = state.todos.value.filter(
++      (todo) => todo !== todoToRemove,
++    );
++  }
++
++  const completeTodo = (todo) => (event) =>
++    (todo.complete.value = event.currentTarget.checked);
+ 
+-export function TodoList() {
+   const onInput = (event) => (text.value = event.currentTarget.value);
++
+   return (
+     <>
+       <input value={text.value} onInput={onInput} />
+       <button onClick={addTodo}>Add</button>
+       <ul>
+-        {todos.value.map((todo) => (
++        {state.todos.value.map((todo) => (
+           <li>
+             <input
+               type="checkbox"
+@@ -39,6 +54,7 @@ export function TodoList() {
+           </li>
+         ))}
+       </ul>
++      Completed: {completed}
+     </>
+   );
+ }

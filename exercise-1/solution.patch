@@ -1,0 +1,33 @@
+--- a/exercise-1/src/todo-list.tsx
++++ b/exercise-1/src/todo-list.tsx
+@@ -9,6 +9,10 @@ function addTodo() {
+   text.value = "";
+ }
+ 
++function removeTodo(todoToRemove) {
++  todos.value = todos.value.filter((todo) => todo !== todoToRemove);
++}
++
+ // Check if our logic works
+ console.log(todos.value);
+ 
+@@ -21,5 +25,18 @@ console.log(todos.value);
+ console.log(text.value);
+ 
+ export function TodoList() {
+-  return <p>Todos here</p>;
++  const onInput = (event) => (text.value = event.currentTarget.value);
++  return (
++    <>
++      <input value={text.value} onInput={onInput} />
++      <button onClick={addTodo}>Add</button>
++      <ul>
++        {todos.value.map((todo) => (
++          <li>
++            {todo.text} <button onClick={() => removeTodo(todo)}>❌</button>
++          </li>
++        ))}
++      </ul>
++    </>
++  );
+ }

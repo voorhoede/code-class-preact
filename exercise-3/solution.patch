@@ -1,0 +1,44 @@
+--- a/exercise-3/src/counter-webcomponent.ts
++++ b/exercise-3/src/counter-webcomponent.ts
+@@ -12,9 +12,25 @@ class CodeClassCounter extends HTMLElement {
+       <p>${this.getAttribute("count")}</p>
+       <button>-4</button>
+     `;
++
++    this.shadowRoot
++      .querySelector("button")
++      ?.addEventListener("click", () => this.decreaseCount());
++  }
++
++  private decreaseCount() {
++    this.dispatchEvent(
++      new CustomEvent("decrease", {
++        detail: {
++          newCount: Number(this.getAttribute("count")) - 4,
++        },
++      }),
++    );
+   }
+ 
+-  private decreaseCount() {}
++  attributeChangedCallback() {
++    this.shadowRoot.querySelector("p").textContent = this.getAttribute("count");
++  }
+ }
+ 
+ customElements.define("code-class-counter", CodeClassCounter);
+
+--- a/exercise-3/src/index.tsx
++++ b/exercise-3/src/index.tsx
+@@ -9,7 +9,10 @@ export function App() {
+   return (
+     <>
+       App count: {count}
+-      <code-class-counter count={count}></code-class-counter>
++      <code-class-counter
++        count={count}
++        ondecrease={(event) => (count.value = event.detail.newCount)}
++      ></code-class-counter>
+       <button onClick={() => count.value++}>+1</button>
+     </>
+   );

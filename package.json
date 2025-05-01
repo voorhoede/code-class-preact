@@ -1,0 +1,30 @@
+{
+  "name": "code-class-preact",
+  "version": "1.0.0",
+  "description": "Code class about Preact at De Voorhoede.",
+  "workspaces": [
+    "exercise-1",
+    "exercise-2",
+    "exercise-3",
+    "exercise-3-alternative"
+  ],
+  "scripts": {
+    "one": "npm -w ./exercise-1 run dev",
+    "two": "npm -w ./exercise-2 run dev",
+    "three": "npm -w ./exercise-3 run dev",
+    "three-alt": "npm -w ./exercise-3-alternative run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/voorhoede/code-class-preact.git"
+  },
+  "author": "Selwyn <talk@selwyn.cc> (https://selwyn.cc/)",
+  "license": "ISC",
+  "dependencies": {
+    "@preact/preset-vite": "^2.10.1",
+    "@preact/signals": "^2.0.4",
+    "preact": "^10.26.5",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.4"
+  }
+}
