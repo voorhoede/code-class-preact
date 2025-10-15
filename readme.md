@@ -17,3 +17,5 @@ To get the solution for an exercise apply the solution patch file, for example f
 ```sh
 git apply exercise-1/solution.patch
 ```
+
+[*<<* My previous code class, about CI & GitHub Actions](https://github.com/voorhoede/code-class-ci)
